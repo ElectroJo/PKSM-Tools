@@ -18,7 +18,6 @@ namespace serveLegality
 
         static void Main(string[] args)
         {
-            {
             byte[] bytes = System.IO.File.ReadAllBytes(args[0]);
 
             bool verbose = true;
