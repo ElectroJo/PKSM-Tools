@@ -21,7 +21,6 @@ namespace serveLegality
         public serveLegalityGUI()
         {
             InitializeComponent();
-            textBox2.Text = GetLocalIPAddress();
         }
 
         public void DisplayUsage()
@@ -70,16 +69,19 @@ namespace serveLegality
             GameInfo.GameStrings gs = GameInfo.GetStrings("en");
             PKM pk = GetPKMFromPayload(inputBuffer);
             LegalityAnalysis la = new LegalityAnalysis(pk);
-            AppendTextBox("\nReceived: " + gs.specieslist[pk.Species] + Environment.NewLine + Environment.NewLine + la.Report(verbose));
-            AppendTextBox(Environment.NewLine + "================================================");
+            AppendTextBox("\nReceived: " + gs.specieslist[pk.Species] + Environment.NewLine + la.Report(verbose));
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             Console.Text += ("Toggle verbose and non verbose checks.");
             Console.Text += Environment.NewLine;
             if (!verbose) verbose = true;
             else verbose = false;
+=======
+            Console.Text += ("Toggle Verbose and non verbose legalities");
+>>>>>>> parent of fdd8f53... add costura.fody, misc changes in the ui
         }
 
         public void AppendTextBox(string value)
@@ -121,6 +123,7 @@ namespace serveLegality
             if (textBox2.Text != "") if(!IPAddress.TryParse(textBox2.Text, out serverAddress)) return;
             TcpListener listener = new TcpListener(serverAddress, 9000);
 
+            Console.Text += Environment.NewLine + "serveLegality is running on " + serverAddress + "... Press CTRL+C to exit.";
             Console.Text += Environment.NewLine + "Waiting for a connection from PKSM (running on address " + PKSMAddress + ")...\n";
             button1.Text = "Server Running...";
 
@@ -135,14 +138,12 @@ namespace serveLegality
                         inputSocket.Receive(inputBuffer);
                         inputSocket.Close();
                         listener.Stop();
-
                         ClearTextBox();
                         PrintLegality(inputBuffer, verbose);
                         PKM pk = GetPKMFromPayload(inputBuffer);
                         ServeLegality.AutoLegality al = new ServeLegality.AutoLegality();
                         PKM legal = al.LoadShowdownSetModded_PKSM(pk);
                         LegalityAnalysis la = new LegalityAnalysis(legal);
-                        AppendTextBox(Environment.NewLine + Environment.NewLine + "AutoLegality final report:" + Environment.NewLine + Environment.NewLine + la.Report(verbose) + Environment.NewLine);
 
                         Array.Copy(Encoding.ASCII.GetBytes(HEADER), 0, outputBuffer, 0, HEADER.Length);
                         Array.Copy(legal.Data, 0, outputBuffer, 7, PKSIZE);
@@ -150,7 +151,8 @@ namespace serveLegality
                         client.Connect(PKSMAddress, 9000);
                         Stream stream = client.GetStream();
                         stream.Write(outputBuffer, 0, outputBuffer.Length);
-                        client.Close();  
+                        client.Close();
+                        AppendTextBox(Environment.NewLine + Environment.NewLine + "AutoLegality final report:\n\n" + la.Report(verbose));
                     }
                     catch (Exception ex)
                     {
