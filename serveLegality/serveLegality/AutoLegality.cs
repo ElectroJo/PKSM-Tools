@@ -30,7 +30,7 @@ namespace ServeLegality
 
             int[] eventList = new int[] { 251, 719, 649, 720, 385, 647, 490, 648, 721, 801, 802 };
 
-            int[] GameVersionList = new int[] { (int)GameVersion.MN, (int)GameVersion.SN, (int)GameVersion.AS, (int)GameVersion.OR, (int)GameVersion.X,
+            int[] GameVersionList = new int[] { (int)GameVersion.US, (int)GameVersion.UM, (int)GameVersion.MN, (int)GameVersion.SN, (int)GameVersion.AS, (int)GameVersion.OR, (int)GameVersion.X,
                                                 (int)GameVersion.Y, (int)GameVersion.B, (int)GameVersion.B2, (int)GameVersion.W, (int)GameVersion.W2,
                                                 (int)GameVersion.D, (int)GameVersion.P, (int)GameVersion.Pt, (int)GameVersion.HG, (int)GameVersion.SS,
                                                 (int)GameVersion.R, (int)GameVersion.S, (int)GameVersion.E, (int)GameVersion.FR, (int)GameVersion.LG,
@@ -425,7 +425,7 @@ namespace ServeLegality
                 updatedReport = recheckLA.Report(false);
                 report = updatedReport;
             }
-            if (report.Equals("Invalid: Encounter Type PID mismatch."))
+            if (report.Contains("Invalid: Encounter Type PID mismatch."))
             {
                 //return true;
 
@@ -461,6 +461,27 @@ namespace ServeLegality
                     {
                         return false;
                     }
+                }
+            }
+            if (report.Contains("Should have at least 3 IVs = 31"))
+            {
+                PKM temp = pk;
+                pk.IV_HP = 31;
+                pk.IV_ATK = 31;
+                pk.IV_DEF = 31;
+                pk.IV_SPA = 31;
+                pk.IV_SPD = 31;
+                pk.IV_SPE = 31;
+                LegalityAnalysis recheckLA = new LegalityAnalysis(pk);
+                updatedReport = recheckLA.Report(false);
+                report = updatedReport;
+                if (new LegalityAnalysis(pk).Valid)
+                {
+                    return false;
+                }
+                else
+                {
+                    pk = temp;
                 }
             }
             return false;
